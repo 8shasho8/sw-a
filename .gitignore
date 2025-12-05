@@ -1,0 +1,27 @@
+# 依存関係（一番重要：ライブラリの実体はGitに入れません）
+node_modules/
+.pnp
+.pnp.js
+
+# テストのカバレッジ結果
+coverage/
+
+# ビルド出力（本番用に生成されたファイル）
+build/
+dist/
+
+# 開発環境の設定ファイルや機密情報（APIキーなどはここに含まれることが多いので隠します）
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ログファイル
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# エディタの設定ファイル（個人の設定は共有しないのが一般的です）
+.vscode/
+.idea/

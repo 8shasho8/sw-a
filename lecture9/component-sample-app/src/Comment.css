@@ -1,0 +1,59 @@
+.Comment {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background-color: lightgray;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.15) inset;
+}
+
+.Comment-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.Comment-avatar {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.Comment-user {
+  font-size: 14px;
+  margin: 0;
+  color: #333;
+}
+
+.Comment-right {
+  flex: 1 1 auto;
+}
+
+.Comment-text {
+  font-size: 18px;
+  margin: 0;
+  color: #333;
+}
+
+.Comment-likeBtn {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.Comment-likeBtn .LikeButton {
+  margin-left: auto;
+  padding: 6px 10px;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.Comment-likeBtn .LikeButton:hover {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}

@@ -12,13 +12,29 @@ function App() {
     { id: createId(), text: 'レポート作成', isFinished: false }
   ];
   const [todos, setTodos] = useState(initialTodos);
+
+  const handleAdd = (text) => {
+    const newTodo = { id: createId(), text: text, isFinished: false };
+    setTodos((prev) => [...prev, newTodo]);
+  }
+
+  const handleRemove = (deleteId) => {
+    setTodos((prev) => prev.filter((t) => t.id !== deleteId));
+  }
+
+  const handleToggle = (toggleId) => {
+    setTodos((prev) => prev.map((t) => (
+      t.id === toggleId ? { ...t, isFinished: !t.isFinished } : t
+    )));
+  }
+
   return (
     <div className="App">
       <Header firstName="Taro" lastName="Toyo" />
       <div className="App-title">ToDo管理アプリ</div>
       <div className="App-content">
-        <TodoInput />
-        <TodoList todos={todos} />
+        <TodoInput onAdd={handleAdd} />
+        <TodoList todos={todos} onRemove={handleRemove} onToggle={handleToggle} />
       </div>
     </div>
   )

@@ -23,7 +23,7 @@ const Counter = () => {
   const handleChangeInput = (e) => { setInput(e.target.value); }
 
   return (
-    <div style={{ padding: 10 }}>
+    <div style={{ padding: 10, textAlign: 'left' }}>
       <input type="text" value={input} onChange={handleChangeInput} />
       <p>{count}回クリックしました</p>
       <button onClick={handleUpdateClick}>Update</button>

@@ -1,10 +1,10 @@
 import './App.css'
-import CSSModule from './CSSModule'
+import EmotionComponent from './EmotionComponent'
 
 function App() {
   return (
     <div>
-      <CSSModule />
+      <EmotionComponent />
     </div>
   )
 }

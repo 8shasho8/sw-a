@@ -1,8 +1,8 @@
-import './Message.css'
+import styles from './Message.module.css'
 
 const Message = () => {
   return (
-    <p className="text">Pure CSSを適用したMessageコンポーネントです</p>
+    <p className={styles.text}>Pure CSSを適用したMessageコンポーネントです</p>
   )
 }
 

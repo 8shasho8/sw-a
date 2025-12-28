@@ -40,3 +40,14 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Styles added from slides: Pure CSS example */
+.App-container {
+  width: 100%;
+  padding: 10px;
+}
+
+.text {
+  font-size: 24px;
+  color: hotpink;
+}

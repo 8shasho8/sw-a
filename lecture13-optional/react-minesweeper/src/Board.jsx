@@ -4,31 +4,45 @@ import Cell from "./Cell";
 
 const Board = ({ row, col, mines }) => {
   const [gameData, setGameData] = useState({});
-  // リセット状態を管理するステートを追加
   const [resetGame, setResetGame] = useState(true);
 
+  // --- 課題4：タイマー用のステート ---
+  const [count, setCount] = useState(0); // 秒数
+  const [startCount, setStartCount] = useState(false); // タイマーが動いているか
+
+  // ゲームの初期化処理
   useEffect(() => {
-    // --- useEffectの処理内容解説 ---
-    
-    // 1. リセットが必要なフラグ（resetGame）が true の時だけ実行する
     if (!resetGame) return;
 
-    // 2. 指定された行・列・地雷数に基づいて、新しい盤面データ（2次元配列）を作成する
     const newBoard = createBoard(row, col, mines);
 
-    // 3. ゲームの初期データをステートに保存する
     setGameData({
-      board: newBoard,                    // 生成した盤面をセット
-      gameStatus: 'Game in Progress',     // ステータスを「進行中」に初期化
-      cellsWithoutMines: row * col - mines, // 勝利判定のため、地雷以外の総マス数を計算
-      numOfMines: mines                   // 表示用の残り地雷数をセット
+      board: newBoard,
+      gameStatus: 'Game in Progress',
+      cellsWithoutMines: row * col - mines,
+      numOfMines: mines
     });
 
-    // 4. リセット処理が完了したので、フラグを false に戻して無限ループを防ぐ
+    // --- リセット時にタイマーも初期化 ---
+    setCount(0);
+    setStartCount(false);
     setResetGame(false);
 
-    // resetGameフラグ、または盤面サイズの設定が変わった時に再実行する
   }, [resetGame, row, col, mines]);
+
+  // --- 課題4：タイマー機能のロジック ---
+  useEffect(() => {
+    let interval;
+    if (!startCount) return () => {};
+
+    interval = setInterval(() => {
+      setCount((prev) => prev + 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [startCount]);
 
   // ▼ 隣接する空白マスを再帰的にオープンする関数
   const revealEmpty = (x, y, data) => {
@@ -39,9 +53,9 @@ const Board = ({ row, col, mines }) => {
 
     if (data.cellsWithoutMines === 0) {
       data.gameStatus = 'You Win';
+      setStartCount(false); // 勝利時にタイマー停止
     }
 
-    // 周辺に地雷がない場合、その周辺8マスを探索
     if (data.board[x][y].value === 0) {
       for (let y2 = Math.max(y - 1, 0); y2 < Math.min(y + 2, col); y2++) {
         for (let x2 = Math.max(x - 1, 0); x2 < Math.min(x + 2, row); x2++) {
@@ -58,6 +72,11 @@ const Board = ({ row, col, mines }) => {
     if (gameData.gameStatus === 'You Lost' || gameData.gameStatus === 'You Win') return;
     if (gameData.board[x][y].revealed || gameData.board[x][y].flagged) return;
 
+    // --- 初めてセルをクリックした時にタイマーを開始 ---
+    if (!startCount) {
+      setStartCount(true);
+    }
+
     const newGameData = { ...gameData };
 
     if (newGameData.board[x][y].value === 'X') {
@@ -67,6 +86,7 @@ const Board = ({ row, col, mines }) => {
         });
       });
       newGameData.gameStatus = 'You Lost';
+      setStartCount(false); // 敗北時にタイマー停止
     } 
     else if (newGameData.board[x][y].value === 0) {
       const newRevealedData = revealEmpty(x, y, newGameData);
@@ -78,6 +98,7 @@ const Board = ({ row, col, mines }) => {
       newGameData.cellsWithoutMines--;
       if (newGameData.cellsWithoutMines === 0) {
         newGameData.gameStatus = 'You Win';
+        setStartCount(false); // 勝利時にタイマー停止
       }
     }
 
@@ -88,6 +109,9 @@ const Board = ({ row, col, mines }) => {
     e.preventDefault();
     if (gameData.gameStatus === 'You Lost' || gameData.gameStatus === 'You Win') return;
     if (gameData.board[x][y].revealed) return;
+
+    // 旗を立てた時もゲーム開始とみなす場合はここでも setStartCount(true)
+    if (!startCount) setStartCount(true);
 
     setGameData((prev) => {
       const newBoard = [...prev.board];
@@ -104,29 +128,26 @@ const Board = ({ row, col, mines }) => {
 
   return (
     <div>
-      {/* リセットボタンの追加 */}
       <div style={{ marginBottom: '10px' }}>
         🚩 {gameData.numOfMines} &nbsp;&nbsp;
+        {/* --- タイマーの表示 --- */}
+        ⏰ {count} &nbsp;&nbsp;
         <button onClick={() => setResetGame(true)}>Reset</button>
       </div>
       <div>Game Status: {gameData.gameStatus}</div>
       <div>
-        {gameData.board.map((singleRow, index1) => {
-          return (
-            <div style={{ display: 'flex' }} key={index1}>
-              {singleRow.map((singleCell, index2) => {
-                return (
-                  <Cell 
-                    details={singleCell} 
-                    onUpdateFlag={(e) => handleUpdateFlag(e, singleCell.x, singleCell.y)} 
-                    onRevealCell={() => handleRevealCell(singleCell.x, singleCell.y)}
-                    key={index2} 
-                  />
-                )
-              })}
-            </div>
-          )
-        })}
+        {gameData.board.map((singleRow, index1) => (
+          <div style={{ display: 'flex' }} key={index1}>
+            {singleRow.map((singleCell, index2) => (
+              <Cell 
+                details={singleCell} 
+                onUpdateFlag={(e) => handleUpdateFlag(e, singleCell.x, singleCell.y)} 
+                onRevealCell={() => handleRevealCell(singleCell.x, singleCell.y)}
+                key={index2} 
+              />
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );
